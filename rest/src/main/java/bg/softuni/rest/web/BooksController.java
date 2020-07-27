@@ -37,6 +37,7 @@ public class BooksController implements AuthorsNamespace {
                                       @PathVariable Long bookId) {
     Optional<Book> theBook = bookRepository.findById(bookId);
 
+//    only if th author is the same
     return theBook.filter(b -> b.getAuthor().getId() == authorId).
             map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
