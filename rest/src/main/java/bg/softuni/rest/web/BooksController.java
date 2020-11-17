@@ -8,6 +8,7 @@ import bg.softuni.rest.repository.BookRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,6 +44,20 @@ public class BooksController implements AuthorsNamespace {
 //    only if th author is the same
     return theBook.filter(b -> b.getAuthor().getId() == authorId).
             map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+
+  @DeleteMapping("/{authorId}/books/{bookId}")
+  public ResponseEntity<Book> deleteBook(@PathVariable Long authorId,
+                                         @PathVariable Long bookId) {
+    Optional<Book> theBook = bookRepository.findById(bookId);
+
+    if (theBook.filter(book -> book.getAuthor().getId() == authorId).isPresent()) {
+      bookRepository.deleteById(theBook.get().getId());
+
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.notFound().build();
   }
 
   @PostMapping(path = "{authorId}/books")
